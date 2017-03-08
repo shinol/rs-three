@@ -12,8 +12,9 @@ export class SceneComponent {
 
   renderer: THREE.Renderer;
   scene: THREE.Scene;
-  camera: THREE.Camera;
+  camera: THREE.PerspectiveCamera;
   mesh: THREE.Mesh;
+  id: number;
   animating: boolean;
 
   constructor(private sceneGraphElement: ElementRef) {
@@ -37,12 +38,11 @@ export class SceneComponent {
 
   @HostListener('window:resize', ['$event'])
     onResize(event) {
-        console.log(event.target.innerWidth, event.target.innerHeight);
         let width = this.sceneGraphElement.nativeElement.childNodes[0].clientWidth;
         let height = this.sceneGraphElement.nativeElement.childNodes[0].clientHeight;
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
         this.renderer.setSize(width, height);
-        // this.stopAnimation();
-        // this.startAnimation();
     }
 
   startAnimation() {
@@ -63,7 +63,7 @@ export class SceneComponent {
     this.mesh.rotation.x += 0.005;
     this.mesh.rotation.y += 0.005;
     this.renderer.render(this.scene, this.camera);
-    if (this.animating) { requestAnimationFrame(() => { this.render() }); };
+    if (this.animating) { this.id = requestAnimationFrame(() => { this.render() }); };
   }
   
 }
